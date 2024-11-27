@@ -1,7 +1,7 @@
 package store.model;
 
 import store.util.Parser;
-import store.validator.OrderFormValidator;
+import store.validator.OrderValidator;
 import store.validator.StockValidator;
 
 public class Order {
@@ -15,8 +15,8 @@ public class Order {
     }
 
     private void validateForm(String product) {
-        OrderFormValidator orderFormValidator = new OrderFormValidator();
-        orderFormValidator.validate(product);
+        OrderValidator orderValidator = new OrderValidator();
+        orderValidator.validate(product);
     }
 
     private void putInfo(String product) {
