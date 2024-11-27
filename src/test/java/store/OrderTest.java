@@ -51,7 +51,7 @@ public class OrderTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("존재하지 않는 제품 이름을 입력하면 예외가 발생한다.")
+    @DisplayName("존재하지 않는 상름 이름을 입력하면 예외가 발생한다.")
     @ParameterizedTest
     @ValueSource(strings = {"[포르쉐-8]"})
     void throwWhenInvalidProductName(String input) {
