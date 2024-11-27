@@ -31,6 +31,7 @@ public class Screen {
             orders = askProductAndPrice();
             checkProducts();
 
+            Receipt receipt = store.getReceipt(askGetMembership());
         } while ();
 
     }
@@ -69,6 +70,14 @@ public class Screen {
 
     private boolean askBuyOriginalPrice(Order order, int itemsAtOriginalPriceCount) {
         return Task.repeatUntilValid(() -> inputView.getPurchaseOrNot(order.getName(), itemsAtOriginalPriceCount));
+    }
+
+    private boolean askGetMembership() {
+        return Task.repeatUntilValid(inputView::getMembershipDiscountOrNot);
+    }
+
+    private boolean askAdditionalPurchase() {
+        return Task.repeatUntilValid(inputView::getAdditionalPurchase);
     }
 
     private Orders makeValidateOrder(String input) {

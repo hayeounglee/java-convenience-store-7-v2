@@ -130,6 +130,13 @@ public class Store {
         receipt.updateGiftProducts(promotion, reducePromotion);
     }
 
+    public Receipt getReceipt(boolean isGetDiscount) {
+        if (!isGetDiscount) {
+            receipt.getNoMembershipDiscount();
+        }
+        return receipt;
+    }
+
     private int countItemsAtOriginalPrice(Order order, Product promotion) {
         return getRemainingPromotion(promotion.getQuantity(), promotion) + order.getQuantity() - promotion.getQuantity();
     }
