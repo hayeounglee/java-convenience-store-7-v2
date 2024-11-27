@@ -9,19 +9,15 @@ import java.util.regex.Pattern;
 
 public class OrderFormValidator {
     public static final Pattern ORDER_PATTERN = Pattern.compile("\\[(.+)-(\\d+)]");
-    public static final int PRODUCT_NAME_GROUP = 1;
     public static final int PRODUCT_QUANTITY_GROUP = 2;
 
-    Matcher matcher;
-
     public void validate(String product) {
-        matcher = ORDER_PATTERN.matcher(product);
-        validatePattern();
+        Matcher matcher = ORDER_PATTERN.matcher(product);
+        validatePattern(matcher);
         validateQuantity(matcher.group(PRODUCT_QUANTITY_GROUP));
     }
 
-
-    public void validatePattern() {
+    public void validatePattern(Matcher matcher) {
         if (!matcher.matches()) {
             throw new InvalidFormException();
         }
@@ -33,8 +29,10 @@ public class OrderFormValidator {
             if (quantity <= 0) {
                 throw new InvalidQuantityException();
             }
+        } catch (InvalidQuantityException e) {
+            throw new InvalidQuantityException();
         } catch (IllegalArgumentException e) {
-            throw new InvalidFormException();
+            throw new IllegalArgumentException();
         }
     }
 }

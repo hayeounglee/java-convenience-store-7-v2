@@ -69,8 +69,4 @@ public class PromotionPolicy {
     public int getPromotionBuyCount() {
         return promotionBuyCount;
     }
-
-    public int getPromotionGetCount() {
-        return promotionGetCount;
-    }
 }
