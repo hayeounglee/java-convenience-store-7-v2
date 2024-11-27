@@ -111,11 +111,10 @@ public class Screen {
             List<Product> products = new ArrayList<>();
             for (Product promotion : promotionProducts) {
                 Product normal = getNormalProduct(normalProducts, promotion);
-
                 normalProducts.remove(normal);
-                products.add(normal);
 
-                products.add(0, promotion);
+                products.add(promotion);
+                products.add(normal);
                 store.addProduct(promotion.getName(), products);
                 products = new ArrayList<>();
             }

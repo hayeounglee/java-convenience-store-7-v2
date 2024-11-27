@@ -1,6 +1,7 @@
 package store.model;
 
 import store.constant.PromotionPeriodState;
+import store.exception.InvalidNonExistOrder;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -178,6 +179,13 @@ public class Store {
 
     public LinkedHashMap<String, List<Product>> getStoreProducts() {
         return storeProducts;
+    }
+
+    public List<Product> getParticularStoreProducts(String name) {
+        if (storeProducts.get(name) == null) {
+            throw new InvalidNonExistOrder();
+        }
+        return storeProducts.get(name);
     }
 
     public List<Product> getProducts(String name) {
