@@ -18,4 +18,11 @@ public class Store {
         store.put(name, products);
     }
 
+    public LinkedHashMap<String, List<Product>> getStore() {
+        return store;
+    }
+    public List<Product> getProducts(String name) {
+        return store.get(name);
+    }
+
 }

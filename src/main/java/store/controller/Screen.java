@@ -26,6 +26,8 @@ public class Screen {
     public void run() {
         do {
             store = bringProducts();
+            outputView.printStoreMenu(store);
+
         } while ();
 
     }
