@@ -28,8 +28,23 @@ public class Screen {
             store = bringProducts();
             outputView.printStoreMenu(store);
 
+            orders = askProductAndPrice();
         } while ();
 
+    }
+
+    private Orders askProductAndPrice() {
+        return Task.repeatUntilValid(() -> {
+            String input = inputView.getProductAndPrice();
+            return makeValidateOrder(input);
+        });
+    }
+
+    private Orders makeValidateOrder(String input) {
+        String[] inputProducts = input.split(",", -1);
+        Orders orders = new Orders();
+        orders.addProduct(inputProducts, store);
+        return orders;
     }
 
     private Store bringProducts() {
