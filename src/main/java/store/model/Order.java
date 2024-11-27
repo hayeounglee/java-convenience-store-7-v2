@@ -25,7 +25,6 @@ public class Order {
         this.quantity = Parser.parseToInt(productInfo.split("-")[1]);
     }
 
-
     private void validateStock(Store store) {
         StockValidator stockValidator = new StockValidator();
         stockValidator.checkStock(name, quantity, store);

@@ -20,9 +20,7 @@ public class Store {
         int reduceNormal = 0;
 
         Product normal = products.get(0);
-        Product promotion = new Product(new String[]{
-                normal.getName(), Integer.toString(normal.getPrice()), "0", "null"
-        });
+        Product promotion = new Product(normal.getName() + "," + normal.getPrice() + ",0,null");
         if ((isPromotionButNotApply(products))) {
             promotion = products.get(0);
             normal = products.get(1);

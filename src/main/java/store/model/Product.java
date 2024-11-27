@@ -9,12 +9,22 @@ public class Product {
     private final String promotion;
     private final PromotionPolicy promotionPolicy;
 
-    public Product(String[] product) {
+    public Product(String line) {
+        String[] product = line.split(",");
         this.name = product[0];
         this.price = Parser.parseToInt(product[1]);
         this.quantity = Parser.parseToInt(product[2]);
         this.promotion = product[3];
         promotionPolicy = new PromotionPolicy(promotion);
+    }
+
+    public boolean isPromotionBenefitPossibleLeft(Order order) {
+        int promotionRemainingCount = getNoPromotionBenefit(order.getQuantity());
+        return promotionRemainingCount == getPromotionBuyCount();
+    }
+
+    public void reduceStock(int num) {
+        quantity -= num;
     }
 
     public boolean isPromotion() {
@@ -25,8 +35,8 @@ public class Product {
         return promotionPolicy.isValidPeriod();
     }
 
-    public void reduceStock(int num) {
-        quantity -= num;
+    public int getNoPromotionBenefit(int num) {
+        return num % getPromotionCount();
     }
 
     public int getPromotionCount() {
@@ -41,14 +51,6 @@ public class Product {
         return promotionPolicy.getGiftCount(possibleGiftProducts);
     }
 
-    public int getNoPromotionBenefit(int num) {
-        return num % getPromotionCount();
-    }
-
-    public boolean isPromotionBenefitPossibleLeft(Order order) {
-        int promotionRemainingCount = getNoPromotionBenefit(order.getQuantity());
-        return promotionRemainingCount == getPromotionBuyCount();
-    }
 
     public String getName() {
         return name;

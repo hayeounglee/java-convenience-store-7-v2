@@ -95,12 +95,10 @@ public class Screen {
             String line;
             List<Product> promotionProducts = new ArrayList<>();
             List<Product> normalProducts = new ArrayList<>();
-            String[] oneProduct;
 
             reader.readLine();
             while ((line = reader.readLine()) != null) {
-                oneProduct = line.split(",");
-                Product product = new Product(oneProduct);
+                Product product = new Product(line);
                 if (product.isPromotion()) {
                     promotionProducts.add(product);
                     continue;
@@ -154,9 +152,9 @@ public class Screen {
                 return normal;
             }
         }
-        return new Product(new String[]{
-                promotionProduct.getName(), Integer.toString(promotionProduct.getPrice()), "0", "null"
-        });
+        return new Product(
+                promotionProduct.getName() +","+ promotionProduct.getPrice() + ",0,null"
+        );
     }
 }
 
