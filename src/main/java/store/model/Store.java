@@ -119,6 +119,16 @@ public class Store {
         receipt.updateGiftProducts(promotion, reducePromotion);
     }
 
+    public void calculateWhenNothing(Order order) {
+        List<Product> products = getProducts(order.getName());
+        Product promotion = products.get(0);
+        Product normal = products.get(1);
+
+        int reducePromotion = order.getQuantity();
+        reduceStock(promotion, reducePromotion);
+        receipt.updateTotalAndDiscount(order, normal, false);
+        receipt.updateGiftProducts(promotion, reducePromotion);
+    }
 
     private int countItemsAtOriginalPrice(Order order, Product promotion) {
         return getRemainingPromotion(promotion.getQuantity(), promotion) + order.getQuantity() - promotion.getQuantity();
