@@ -13,7 +13,7 @@ public class OutputView {
                 현재 보유하고 있는 상품입니다.
                 """);
 
-        for (Map.Entry<String, List<Product>> mapElement : store.getStore().entrySet()) {
+        for (Map.Entry<String, List<Product>> mapElement : store.getStoreProducts().entrySet()) {
             List<Product> productList = mapElement.getValue();
             for (Product product : productList) {
                 System.out.printf("- %s %s원 %s %s", product.getName(), String.format("%,d", product.getPrice()), changeWhenNoStock(product.getQuantity()), changeWhenNoPromotion(product.getPromotion()));

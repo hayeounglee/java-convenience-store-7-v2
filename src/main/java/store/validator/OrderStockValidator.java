@@ -14,7 +14,7 @@ public class OrderStockValidator {
     }
 
     private boolean isStockLack(String name, int quantity, Store store) {
-        List<Product> productList = store.getStore().get(name);
+        List<Product> productList = store.getStoreProducts().get(name);
         int orderCount = quantity;
         int count = 0;
 

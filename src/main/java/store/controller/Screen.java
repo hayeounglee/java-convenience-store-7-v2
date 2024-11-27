@@ -134,7 +134,7 @@ public class Screen {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/products.md", false));
             writer.write("name,price,quantity,promotion\n");
-            for (Map.Entry<String, List<Product>> mapElement : store.getStore().entrySet()) {
+            for (Map.Entry<String, List<Product>> mapElement : store.getStoreProducts().entrySet()) {
                 List<Product> productList = mapElement.getValue();
                 for (Product product : productList) {
                     writer.write(product.getName() + "," + product.getPrice() + "," + product.getQuantity() + "," + product.getPromotion() + "\n");

@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 public class Store {
-    private final LinkedHashMap<String, List<Product>> store;
+    private final LinkedHashMap<String, List<Product>> storeProducts;
     private final Receipt receipt;
 
     public Store() {
-        store = new LinkedHashMap<>();
+        storeProducts = new LinkedHashMap<>();
         receipt = new Receipt();
     }
 
@@ -157,7 +157,7 @@ public class Store {
     }
 
     public boolean isOrderProductExist(Order order) {
-        for (Map.Entry<String, List<Product>> mapElement : store.entrySet()) {
+        for (Map.Entry<String, List<Product>> mapElement : storeProducts.entrySet()) {
             List<Product> productList = mapElement.getValue();
             for (Product product : productList) {
                 if (product.getName().equals(order.getName())) {
@@ -173,15 +173,15 @@ public class Store {
     }
 
     public void addProduct(String name, List<Product> products) {
-        store.put(name, products);
+        storeProducts.put(name, products);
     }
 
-    public LinkedHashMap<String, List<Product>> getStore() {
-        return store;
+    public LinkedHashMap<String, List<Product>> getStoreProducts() {
+        return storeProducts;
     }
 
     public List<Product> getProducts(String name) {
-        return store.get(name);
+        return storeProducts.get(name);
     }
 
 }
