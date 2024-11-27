@@ -41,6 +41,16 @@ public class Screen {
                 continue;
             }
 
+            PromotionPeriodState promotionPeriodState = store.executeWhenPromotionPeriod(order);
+            if (promotionPeriodState == PromotionPeriodState.GET_ONE_FREE) {
+                store.calculateWhenGetOneFreeCase(order, askGetOneFree(order));
+                continue;
+            }
+            if (promotionPeriodState == PromotionPeriodState.BUY_ORIGINAL_PRICE) {
+                store.calculateWhenBuyOriginalPrice(order, askBuyOriginalPrice(order, store.checkBuyOriginalPrice(order)));
+                continue;
+            }
+
         }
     }
 
@@ -49,6 +59,14 @@ public class Screen {
             String input = inputView.getProductAndPrice();
             return makeValidateOrder(input);
         });
+    }
+
+    private boolean askGetOneFree(Order order) {
+        return Task.repeatUntilValid(() -> inputView.getOneMoreFree(order));
+    }
+
+    private boolean askBuyOriginalPrice(Order order, int itemsAtOriginalPriceCount) {
+        return Task.repeatUntilValid(() -> inputView.getPurchaseOrNot(order.getName(), itemsAtOriginalPriceCount));
     }
 
     private Orders makeValidateOrder(String input) {
