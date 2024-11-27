@@ -1,7 +1,7 @@
 package store.constant;
 
 public enum StockState {
-    NO_STOCK("0", "재고없음"),
+    NO_STOCK("0", "재고 없음"),
     HAVE_STOCK("1", "");
 
     private final String message;
