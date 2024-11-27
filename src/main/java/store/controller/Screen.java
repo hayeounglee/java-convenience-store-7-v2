@@ -29,8 +29,19 @@ public class Screen {
             outputView.printStoreMenu(store);
 
             orders = askProductAndPrice();
+            checkProducts();
+
         } while ();
 
+    }
+
+    public void checkProducts() {
+        for (Order order : orders.getOrders()) {
+            if (store.executeWhenNotPromotionPeriod(order)) {
+                continue;
+            }
+
+        }
     }
 
     private Orders askProductAndPrice() {
