@@ -27,7 +27,7 @@ public class Order {
 
     private void validateStock(Store store) {
         OrderStockValidator orderStockValidator = new OrderStockValidator();
-        orderStockValidator.checkStock(name, quantity, store);
+        orderStockValidator.validate(name, quantity, store);
     }
 
     public void increaseQuantity() {

@@ -4,6 +4,7 @@ import store.constant.PromotionPeriodState;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Store {
     private final LinkedHashMap<String, List<Product>> store;
@@ -153,6 +154,18 @@ public class Store {
 
     private boolean isPromotionButNotApply(List<Product> products) {
         return products.size() == 2;
+    }
+
+    public boolean isOrderProductExist(Order order) {
+        for (Map.Entry<String, List<Product>> mapElement : store.entrySet()) {
+            List<Product> productList = mapElement.getValue();
+            for (Product product : productList) {
+                if (product.getName().equals(order.getName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void reduceStock(Product product, int countReduce) {

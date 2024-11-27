@@ -1,5 +1,8 @@
 package store.model;
 
+import store.validator.OrderNameValidator;
+import store.validator.OrderStockValidator;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +17,8 @@ public class Orders {
         for (String product : inputProducts) {
             orders.add(new Order(product, store));
         }
+        OrderNameValidator orderNameValidator = new OrderNameValidator();
+        orderNameValidator.validate(orders, store);
     }
 
     public List<Order> getOrders() {

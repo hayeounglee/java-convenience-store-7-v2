@@ -7,7 +7,7 @@ import store.model.Store;
 import java.util.List;
 
 public class OrderStockValidator {
-    public void checkStock(String name, int quantity, Store store) {
+    public void validate(String name, int quantity, Store store) {
         if (isStockLack(name, quantity, store)) {
             throw new InvalidStockCount();
         }
