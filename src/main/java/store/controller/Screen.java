@@ -32,7 +32,9 @@ public class Screen {
             checkProducts();
 
             Receipt receipt = store.getReceipt(askGetMembership());
-        } while ();
+            outputView.printReceipt(orders, store, receipt);
+            updateStockResult(store);
+        } while (askAdditionalPurchase());
 
     }
 
@@ -125,6 +127,22 @@ public class Screen {
                 }
             }
             return store;
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e.getMessage()); //이게 뭐지?
+        }
+    }
+
+    private void updateStockResult(Store store) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/products.md", false));
+            writer.write("name,price,quantity,promotion\n");
+            for (Map.Entry<String, List<Product>> mapElement : store.getStore().entrySet()) {
+                List<Product> productList = mapElement.getValue();
+                for (Product product : productList) {
+                    writer.write(product.getName() + "," + product.getPrice() + "," + product.getQuantity() + "," + product.getPromotion() + "\n");
+                }
+            }
+            writer.close();
         } catch (IOException e) {
             throw new IllegalArgumentException(e.getMessage()); //이게 뭐지?
         }
