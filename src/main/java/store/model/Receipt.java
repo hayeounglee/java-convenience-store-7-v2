@@ -21,7 +21,7 @@ public class Receipt {
         int price = order.getQuantity() * product.getPrice();
         totalPurchasePrice += price;
         totalPurchaseCount += order.getQuantity();
-        System.out.println(totalPurchaseCount);
+
         if (canGetDiscount) {
             membershipDiscount += price * MembershipDiscount.DISCOUNT_RATE.getValue();
         }

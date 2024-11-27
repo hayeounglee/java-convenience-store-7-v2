@@ -58,7 +58,7 @@ public class Store {
         Product promotion = products.get(0);
 
         if (promotion.isPromotionPeriod() & isPromotionMoreThanOrder(order, promotion)) {
-            if (isPromotionLeft(order, promotion) & isPromotionStockEnough(order, promotion)) {
+            if (isPromotionBenefitPossibleLeft(order, promotion) & isPromotionStockEnough(order, promotion)) {
                 return true;
             }
         }
@@ -138,32 +138,27 @@ public class Store {
     }
 
     private int countItemsAtOriginalPrice(Order order, Product promotion) {
-        return getRemainingPromotion(promotion.getQuantity(), promotion) + order.getQuantity() - promotion.getQuantity();
+        return promotion.getNoPromotionBenefit(promotion.getQuantity()) + order.getQuantity() - promotion.getQuantity();
     }
 
     private boolean isPromotionMoreThanOrder(Order order, Product promotion) {
         return promotion.getQuantity() > order.getQuantity();
     }
 
-    private boolean isPromotionLeft(Order order, Product promotion) {
-        int promotionRemainingCount = getRemainingPromotion(order.getQuantity(), promotion);
-        return promotionRemainingCount == promotion.getPromotionBuyCount();
-    }
-
-    private int getRemainingPromotion(int num, Product promotion) {
-        return num % promotion.getPromotionCount();
+    private boolean isPromotionBenefitPossibleLeft(Order order, Product promotion) {
+        return promotion.isPromotionBenefitPossibleLeft(order);
     }
 
     private boolean isPromotionStockEnough(Order order, Product promotion) {
         return promotion.getQuantity() >= order.getQuantity() + 1;
     }
 
-    private void reduceStock(Product product, int countReduce) {
-        product.reduceStock(countReduce);
-    }
-
     private boolean isPromotionButNotApply(List<Product> products) {
         return products.size() == 2;
+    }
+
+    private void reduceStock(Product product, int countReduce) {
+        product.reduceStock(countReduce);
     }
 
     public void addProduct(String name, List<Product> products) {

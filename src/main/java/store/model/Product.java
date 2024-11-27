@@ -1,6 +1,5 @@
 package store.model;
 
-import store.service.PromotionPolicy;
 import store.util.Parser;
 
 public class Product {
@@ -40,6 +39,15 @@ public class Product {
 
     public int getGiftCount(int possibleGiftProducts) {
         return promotionPolicy.getGiftCount(possibleGiftProducts);
+    }
+
+    public int getNoPromotionBenefit(int num) {
+        return num % getPromotionCount();
+    }
+
+    public boolean isPromotionBenefitPossibleLeft(Order order) {
+        int promotionRemainingCount = getNoPromotionBenefit(order.getQuantity());
+        return promotionRemainingCount == getPromotionBuyCount();
     }
 
     public String getName() {
