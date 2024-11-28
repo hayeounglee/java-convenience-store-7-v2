@@ -1,6 +1,5 @@
 package store.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Products {
@@ -12,19 +11,56 @@ public class Products {
         this.products = products;
     }
 
-    public void addProduct(Product product) {
-        products.add(product);
-    }
-
-    public boolean isPromotionButNotApply(List<Product> products) {
+    public boolean isGetOneFree(Order order) {
         Product promotion = getPromotionProduct();
-        if (promotion.isPromotion() & !promotion.isPromotionPeriod()) {
-            return true;
-        }
-        if (promotion.isPromotion() & promotion.getQuantity() == 0) {
+
+        if (promotion.isPromotionPeriod() &&
+                isPromotionMoreThanOrder(order, promotion) &&
+                isPromotionBenefitPossibleLeft(order, promotion) &&
+                isPromotionStockEnough(order, promotion)) {
             return true;
         }
         return false;
+    }
+
+    public boolean isBuyOriginalPrice(Order order) {
+        if (countBuyOriginalPrice(order) > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public int countReducePromotionWhen(Order order) {
+        return order.getQuantity() - countBuyOriginalPrice(order);
+    }
+
+    public void notOrderOriginalPrice(Order order) {
+        order.decreaseQuantity(countBuyOriginalPrice(order));
+    }
+
+    public boolean isOrderQuantityBuyOnlyPromotionStock(Order order) {
+        return countBuyOriginalPrice(order) == order.getQuantity();
+    }
+
+    public int countBuyOriginalPrice(Order order) {
+        Product promotion = getPromotionProduct();
+
+        if (promotion.isPromotionPeriod() && !isPromotionMoreThanOrder(order, promotion)) {
+            return promotion.getNoPromotionBenefit(promotion.getQuantity()) + order.getQuantity() - promotion.getQuantity();
+        }
+        return 0;
+    }
+
+    private boolean isPromotionMoreThanOrder(Order order, Product promotion) {
+        return promotion.getQuantity() > order.getQuantity();
+    }
+
+    private boolean isPromotionBenefitPossibleLeft(Order order, Product promotion) {
+        return promotion.isPromotionBenefitPossibleLeft(order);
+    }
+
+    private boolean isPromotionStockEnough(Order order, Product promotion) {
+        return promotion.getQuantity() >= order.getQuantity() + 1;
     }
 
     public Product getPromotionProduct() {

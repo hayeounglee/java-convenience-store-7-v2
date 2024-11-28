@@ -50,7 +50,7 @@ public class Screen {
                 continue;
             }
             if (promotionPeriodState == PromotionPeriodState.BUY_ORIGINAL_PRICE) {
-                store.calculateWhenBuyOriginalPrice(order, askBuyOriginalPrice(order, store.checkBuyOriginalPrice(order)));
+                store.calculateWhenBuyOriginalPrice(order, askBuyOriginalPrice(order, store.countBuyOriginalPrice(order)));
                 continue;
             }
             if (promotionPeriodState == PromotionPeriodState.NOTHING) {

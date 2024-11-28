@@ -41,7 +41,7 @@ public class Store {
         if (checkGetOneFree(order)) {
             return PromotionPeriodState.GET_ONE_FREE;
         }
-        if (checkBuyOriginalPrice(order) > 0) {
+        if (checkBuyOriginalPrice(order)) {
             return PromotionPeriodState.BUY_ORIGINAL_PRICE;
         }
         return PromotionPeriodState.NOTHING;
@@ -49,14 +49,7 @@ public class Store {
 
     public boolean checkGetOneFree(Order order) {
         Products products = getProducts(order.getName());
-        Product promotion = products.getPromotionProduct();
-
-        if (promotion.isPromotionPeriod() & isPromotionMoreThanOrder(order, promotion)) {
-            if (isPromotionBenefitPossibleLeft(order, promotion) & isPromotionStockEnough(order, promotion)) {
-                return true;
-            }
-        }
-        return false;
+        return products.isGetOneFree(order);
     }
 
     public void calculateWhenGetOneFreeCase(Order order, boolean isGetFree) {
@@ -78,14 +71,9 @@ public class Store {
         receipt.updateGiftProducts(promotion, reducePromotion);
     }
 
-    public int checkBuyOriginalPrice(Order order) {
+    public boolean checkBuyOriginalPrice(Order order) {
         Products products = getProducts(order.getName());
-        Product promotion = products.getPromotionProduct();
-
-        if (promotion.isPromotionPeriod() & !isPromotionMoreThanOrder(order, promotion)) {
-            return countItemsAtOriginalPrice(order, promotion);
-        }
-        return 0;
+        return products.isBuyOriginalPrice(order);
     }
 
     public void calculateWhenBuyOriginalPrice(Order order, boolean getOriginalPrice) {
@@ -95,7 +83,6 @@ public class Store {
 
         int reducePromotion = 0;
         int reduceNormal = 0;
-        boolean canGetDiscount = false;
 
         reducePromotion = promotion.getQuantity();
         if (promotion.getQuantity() < order.getQuantity()) {
@@ -104,16 +91,14 @@ public class Store {
 
         if (!getOriginalPrice) {
             reduceNormal = 0;
-            reducePromotion = order.getQuantity() - countItemsAtOriginalPrice(order, promotion);
-            order.decreaseQuantity(countItemsAtOriginalPrice(order, promotion));
+            reducePromotion = products.countReducePromotionWhen(order);
+            products.notOrderOriginalPrice(order);
         }
 
         reduceStock(normal, reduceNormal);
         reduceStock(promotion, reducePromotion);
 
-        if (countItemsAtOriginalPrice(order, promotion) == order.getQuantity()) {
-            canGetDiscount = true;
-        }
+        boolean canGetDiscount = products.isOrderQuantityBuyOnlyPromotionStock(order);
 
         receipt.updateTotalAndDiscount(order, normal, canGetDiscount);
         receipt.updateGiftProducts(promotion, reducePromotion);
@@ -137,32 +122,9 @@ public class Store {
         return receipt;
     }
 
-    private int countItemsAtOriginalPrice(Order order, Product promotion) {
-        return promotion.getNoPromotionBenefit(promotion.getQuantity()) + order.getQuantity() - promotion.getQuantity();
-    }
-
-    private boolean isPromotionMoreThanOrder(Order order, Product promotion) {
-        return promotion.getQuantity() > order.getQuantity();
-    }
-
-    private boolean isPromotionBenefitPossibleLeft(Order order, Product promotion) {
-        return promotion.isPromotionBenefitPossibleLeft(order);
-    }
-
-    private boolean isPromotionStockEnough(Order order, Product promotion) {
-        return promotion.getQuantity() >= order.getQuantity() + 1;
-    }
-
-    public boolean isOrderProductExist(Order order) {
-        for (Map.Entry<String, Products> mapElement : storeProducts.entrySet()) {
-            Products productList = mapElement.getValue();
-            for (Product product : productList.getProducts()) {
-                if (product.getName().equals(order.getName())) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public int countBuyOriginalPrice(Order order) {
+        Products products = getProducts(order.getName());
+        return products.countBuyOriginalPrice(order);
     }
 
     private void reduceStock(Product product, int countReduce) {
