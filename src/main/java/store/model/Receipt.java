@@ -2,19 +2,22 @@ package store.model;
 
 import store.constant.MembershipDiscount;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Receipt {
-    private int totalPurchasePrice = 0;
-    private int totalPurchaseCount = 0;
-    private int membershipDiscount = 0;
-    private int promotionDiscount = 0;
+    private final GiftProducts giftProducts;
 
-    private final List<GiftProduct> giftProducts;
+    private int totalPurchasePrice;
+    private int totalPurchaseCount;
+    private int membershipDiscount;
+    private int promotionDiscount;
 
     public Receipt() {
-        giftProducts = new ArrayList<>();
+        giftProducts = new GiftProducts();
+        totalPurchasePrice = 0;
+        totalPurchaseCount = 0;
+        membershipDiscount = 0;
+        promotionDiscount = 0;
     }
 
     public void updateTotalAndDiscount(Order order, Product product, boolean canGetDiscount) {
@@ -28,7 +31,7 @@ public class Receipt {
     }
 
     public void updateGiftProducts(Product promotion, int possibleGiftProducts) {
-        giftProducts.add(new GiftProduct(promotion.getName(), promotion.getGiftCount(possibleGiftProducts)));
+        giftProducts.update(promotion, possibleGiftProducts);
         promotionDiscount += promotion.getGiftCount(possibleGiftProducts) * promotion.getPrice();
     }
 
@@ -49,7 +52,7 @@ public class Receipt {
     }
 
     public List<GiftProduct> getGiftProducts() {
-        return giftProducts;
+        return giftProducts.getGiftProducts();
     }
 
     public int getTotalPurchaseCount() {

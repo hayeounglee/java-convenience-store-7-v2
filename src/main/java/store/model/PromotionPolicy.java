@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 public class PromotionPolicy {
     private int promotionBuyCount;
     private int promotionGetCount;
-
     private String startDate;
     private String endDate;
 
