@@ -4,7 +4,6 @@ import store.constant.PromotionPeriodState;
 import store.exception.InvalidNonExistOrder;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class Store {
     private final LinkedHashMap<String, Products> storeProducts;
@@ -17,24 +16,23 @@ public class Store {
 
     public boolean executeWhenNotPromotionPeriod(Order order) {
         Products products = getProducts(order.getName());
-        int reducePromotion = 0;
-        int reduceNormal = 0;
-
         Product normal = products.getNormalProduct();
         Product promotion = products.getPromotionProduct();
 
-        if (!promotion.isPromotionPeriod()) {
-            reduceNormal = order.getQuantity();
-            if (normal.getQuantity() < order.getQuantity()) {
-                reducePromotion = normal.getQuantity();
-                reduceNormal = order.getQuantity() - reducePromotion;
-            }
-            reduceStock(normal, reduceNormal);
-            reduceStock(promotion, reducePromotion);
-            receipt.updateTotalAndDiscount(order, normal, true);
-            return true;
+        if (promotion.isPromotionPeriod()) {
+            return false;
         }
-        return false;
+
+        int reduceNormal = order.getQuantity();
+        int reducePromotion = 0;
+        if (normal.getQuantity() < order.getQuantity()) {
+            reducePromotion = normal.getQuantity();
+            reduceNormal = order.getQuantity() - reducePromotion;
+        }
+        reduceStock(normal, reduceNormal);
+        reduceStock(promotion, reducePromotion);
+        receipt.updateTotalAndDiscount(order, normal, true);
+        return true;
     }
 
     public PromotionPeriodState executeWhenPromotionPeriod(Order order) {
@@ -57,10 +55,8 @@ public class Store {
         Product normal = products.getNormalProduct();
         Product promotion = products.getPromotionProduct();
 
-        int reducePromotion = 0;
         int reduceNormal = 0;
-
-        reducePromotion = order.getQuantity();
+        int reducePromotion = order.getQuantity();
         if (isGetFree) {
             reducePromotion += 1;
             order.increaseQuantity();
@@ -81,10 +77,8 @@ public class Store {
         Product normal = products.getNormalProduct();
         Product promotion = products.getPromotionProduct();
 
-        int reducePromotion = 0;
         int reduceNormal = 0;
-
-        reducePromotion = promotion.getQuantity();
+        int reducePromotion = promotion.getQuantity();
         if (promotion.getQuantity() < order.getQuantity()) {
             reduceNormal = order.getQuantity() - reducePromotion;
         }
@@ -149,5 +143,4 @@ public class Store {
     public Products getProducts(String name) {
         return storeProducts.get(name);
     }
-
 }
