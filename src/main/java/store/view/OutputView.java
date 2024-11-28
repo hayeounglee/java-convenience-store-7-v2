@@ -3,7 +3,6 @@ package store.view;
 import store.constant.StockState;
 import store.model.*;
 
-import java.util.List;
 import java.util.Map;
 
 public class OutputView {
@@ -13,9 +12,9 @@ public class OutputView {
                 현재 보유하고 있는 상품입니다.
                 """);
 
-        for (Map.Entry<String, List<Product>> mapElement : store.getStoreProducts().entrySet()) {
-            List<Product> productList = mapElement.getValue();
-            for (Product product : productList) {
+        for (Map.Entry<String, Products> mapElement : store.getStoreProducts().entrySet()) {
+            Products productList = mapElement.getValue();
+            for (Product product : productList.getProducts()) {
                 System.out.printf("- %s %s원 %s %s", product.getName(), String.format("%,d", product.getPrice()), changeWhenNoStock(product.getQuantity()), changeWhenNoPromotion(product.getPromotion()));
                 System.out.println();
             }
@@ -32,7 +31,7 @@ public class OutputView {
         System.out.println("==============W 편의점================");
         System.out.println("상품명\t\t\t\t수량\t\t금액");
         for (Order order : orders.getOrders()) {
-            int price = store.getProducts(order.getName()).get(0).getPrice();
+            int price = store.getProducts(order.getName()).getNormalProduct().getPrice();
             System.out.printf("%-4s\t\t\t\t%s\t\t%s\n", order.getName(), order.getQuantity(), String.format("%,d", order.getQuantity() * price));
         }
     }

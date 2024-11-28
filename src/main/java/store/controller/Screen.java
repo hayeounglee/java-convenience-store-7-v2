@@ -54,7 +54,7 @@ public class Screen {
                 continue;
             }
             if (promotionPeriodState == PromotionPeriodState.NOTHING) {
-                store.calculateWhenNothing(order);
+                store.calculateWhenNothingToAsk(order);
             }
         }
     }
@@ -115,12 +115,12 @@ public class Screen {
 
                 products.add(promotion);
                 products.add(normal);
-                store.addProduct(promotion.getName(), products);
+                store.addProduct(promotion.getName(), new Products(products));
                 products = new ArrayList<>();
             }
             if (normalProducts.size() != 0) {
                 for (Product normalProduct : normalProducts) {
-                    store.addProduct(normalProduct.getName(), new ArrayList<>(List.of(normalProduct)));
+                    store.addProduct(normalProduct.getName(), new Products(List.of(normalProduct)));
                 }
             }
             return store;
@@ -133,9 +133,9 @@ public class Screen {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/products.md", false));
             writer.write("name,price,quantity,promotion\n");
-            for (Map.Entry<String, List<Product>> mapElement : store.getStoreProducts().entrySet()) {
-                List<Product> productList = mapElement.getValue();
-                for (Product product : productList) {
+            for (Map.Entry<String, Products> mapElement : store.getStoreProducts().entrySet()) {
+                Products productList = mapElement.getValue();
+                for (Product product : productList.getProducts()) {
                     writer.write(product.getName() + "," + product.getPrice() + "," + product.getQuantity() + "," + product.getPromotion() + "\n");
                 }
             }
@@ -152,7 +152,7 @@ public class Screen {
             }
         }
         return new Product(
-                promotionProduct.getName() +","+ promotionProduct.getPrice() + ",0,null"
+                promotionProduct.getName() + "," + promotionProduct.getPrice() + ",0,null"
         );
     }
 }

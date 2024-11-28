@@ -2,6 +2,7 @@ package store.validator;
 
 import store.exception.InvalidStockCount;
 import store.model.Product;
+import store.model.Products;
 import store.model.Store;
 
 import java.util.List;
@@ -14,10 +15,10 @@ public class OrderStockValidator {
     }
 
     private boolean isStockLack(String name, int orderCount, Store store) {
-        List<Product> productList = store.getParticularStoreProducts(name);
+        Products productList = store.getParticularStoreProducts(name);
         int count = 0;
 
-        for (Product product : productList) {
+        for (Product product : productList.getProducts()) {
             count += product.getQuantity();
         }
 

@@ -51,7 +51,6 @@ public class Product {
         return promotionPolicy.getGiftCount(possibleGiftProducts);
     }
 
-
     public String getName() {
         return name;
     }

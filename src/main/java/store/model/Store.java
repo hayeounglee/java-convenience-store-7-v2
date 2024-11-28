@@ -4,11 +4,10 @@ import store.constant.PromotionPeriodState;
 import store.exception.InvalidNonExistOrder;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Store {
-    private final LinkedHashMap<String, List<Product>> storeProducts;
+    private final LinkedHashMap<String, Products> storeProducts;
     private final Receipt receipt;
 
     public Store() {
@@ -17,16 +16,12 @@ public class Store {
     }
 
     public boolean executeWhenNotPromotionPeriod(Order order) {
-        List<Product> products = getProducts(order.getName());
+        Products products = getProducts(order.getName());
         int reducePromotion = 0;
         int reduceNormal = 0;
 
-        Product normal = products.get(0);
-        Product promotion = new Product(normal.getName() + "," + normal.getPrice() + ",0,null");
-        if ((isPromotionButNotApply(products))) {
-            promotion = products.get(0);
-            normal = products.get(1);
-        }
+        Product normal = products.getNormalProduct();
+        Product promotion = products.getPromotionProduct();
 
         if (!promotion.isPromotionPeriod()) {
             reduceNormal = order.getQuantity();
@@ -34,7 +29,6 @@ public class Store {
                 reducePromotion = normal.getQuantity();
                 reduceNormal = order.getQuantity() - reducePromotion;
             }
-
             reduceStock(normal, reduceNormal);
             reduceStock(promotion, reducePromotion);
             receipt.updateTotalAndDiscount(order, normal, true);
@@ -54,8 +48,8 @@ public class Store {
     }
 
     public boolean checkGetOneFree(Order order) {
-        List<Product> products = getProducts(order.getName());
-        Product promotion = products.get(0);
+        Products products = getProducts(order.getName());
+        Product promotion = products.getPromotionProduct();
 
         if (promotion.isPromotionPeriod() & isPromotionMoreThanOrder(order, promotion)) {
             if (isPromotionBenefitPossibleLeft(order, promotion) & isPromotionStockEnough(order, promotion)) {
@@ -66,9 +60,9 @@ public class Store {
     }
 
     public void calculateWhenGetOneFreeCase(Order order, boolean isGetFree) {
-        List<Product> products = getProducts(order.getName());
-        Product promotion = products.get(0);
-        Product normal = products.get(1);
+        Products products = getProducts(order.getName());
+        Product normal = products.getNormalProduct();
+        Product promotion = products.getPromotionProduct();
 
         int reducePromotion = 0;
         int reduceNormal = 0;
@@ -85,8 +79,8 @@ public class Store {
     }
 
     public int checkBuyOriginalPrice(Order order) {
-        List<Product> products = getProducts(order.getName());
-        Product promotion = products.get(0);
+        Products products = getProducts(order.getName());
+        Product promotion = products.getPromotionProduct();
 
         if (promotion.isPromotionPeriod() & !isPromotionMoreThanOrder(order, promotion)) {
             return countItemsAtOriginalPrice(order, promotion);
@@ -95,12 +89,13 @@ public class Store {
     }
 
     public void calculateWhenBuyOriginalPrice(Order order, boolean getOriginalPrice) {
-        List<Product> products = getProducts(order.getName());
-        Product promotion = products.get(0);
-        Product normal = products.get(1);
+        Products products = getProducts(order.getName());
+        Product normal = products.getNormalProduct();
+        Product promotion = products.getPromotionProduct();
 
         int reducePromotion = 0;
         int reduceNormal = 0;
+        boolean canGetDiscount = false;
 
         reducePromotion = promotion.getQuantity();
         if (promotion.getQuantity() < order.getQuantity()) {
@@ -115,14 +110,19 @@ public class Store {
 
         reduceStock(normal, reduceNormal);
         reduceStock(promotion, reducePromotion);
-        receipt.updateTotalAndDiscount(order, normal, false);
+
+        if (countItemsAtOriginalPrice(order, promotion) == order.getQuantity()) {
+            canGetDiscount = true;
+        }
+
+        receipt.updateTotalAndDiscount(order, normal, canGetDiscount);
         receipt.updateGiftProducts(promotion, reducePromotion);
     }
 
-    public void calculateWhenNothing(Order order) {
-        List<Product> products = getProducts(order.getName());
-        Product promotion = products.get(0);
-        Product normal = products.get(1);
+    public void calculateWhenNothingToAsk(Order order) {
+        Products products = getProducts(order.getName());
+        Product normal = products.getNormalProduct();
+        Product promotion = products.getPromotionProduct();
 
         int reducePromotion = order.getQuantity();
         reduceStock(promotion, reducePromotion);
@@ -153,14 +153,10 @@ public class Store {
         return promotion.getQuantity() >= order.getQuantity() + 1;
     }
 
-    private boolean isPromotionButNotApply(List<Product> products) {
-        return products.size() == 2;
-    }
-
     public boolean isOrderProductExist(Order order) {
-        for (Map.Entry<String, List<Product>> mapElement : storeProducts.entrySet()) {
-            List<Product> productList = mapElement.getValue();
-            for (Product product : productList) {
+        for (Map.Entry<String, Products> mapElement : storeProducts.entrySet()) {
+            Products productList = mapElement.getValue();
+            for (Product product : productList.getProducts()) {
                 if (product.getName().equals(order.getName())) {
                     return true;
                 }
@@ -173,22 +169,22 @@ public class Store {
         product.reduceStock(countReduce);
     }
 
-    public void addProduct(String name, List<Product> products) {
+    public void addProduct(String name, Products products) {
         storeProducts.put(name, products);
     }
 
-    public LinkedHashMap<String, List<Product>> getStoreProducts() {
+    public LinkedHashMap<String, Products> getStoreProducts() {
         return storeProducts;
     }
 
-    public List<Product> getParticularStoreProducts(String name) {
+    public Products getParticularStoreProducts(String name) {
         if (storeProducts.get(name) == null) {
             throw new InvalidNonExistOrder();
         }
         return storeProducts.get(name);
     }
 
-    public List<Product> getProducts(String name) {
+    public Products getProducts(String name) {
         return storeProducts.get(name);
     }
 

@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import store.model.Order;
 import store.model.Product;
+import store.model.Products;
 import store.model.Store;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class OrderTest {
         List<Product> products = new ArrayList<>();
         products.add(new Product("밤티라미수,4500,5,반짝할인"));
         products.add(new Product("밤티라미수,4500,2,null"));
-        store.addProduct("밤티라미수", products);
+        store.addProduct("밤티라미수", new Products(products));
     }
 
     @DisplayName("올바르지 않은 상품 형식을 입력하면 예외가 발생한다.")
