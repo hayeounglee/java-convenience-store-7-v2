@@ -26,8 +26,8 @@ public class Store {
         int reduceNormal = order.getQuantity();
         int reducePromotion = 0;
         if (normal.getQuantity() < order.getQuantity()) {
-            reducePromotion = normal.getQuantity();
-            reduceNormal = order.getQuantity() - reducePromotion;
+            reduceNormal = normal.getQuantity();
+            reducePromotion = order.getQuantity() - reduceNormal;
         }
         reduceStock(normal, reduceNormal);
         reduceStock(promotion, reducePromotion);
@@ -102,6 +102,10 @@ public class Store {
         Products products = getProducts(order.getName());
         Product normal = products.getNormalProduct();
         Product promotion = products.getPromotionProduct();
+
+        if (!promotion.isPromotionPeriod()) {
+            return;
+        }
 
         int reducePromotion = order.getQuantity();
         reduceStock(promotion, reducePromotion);
