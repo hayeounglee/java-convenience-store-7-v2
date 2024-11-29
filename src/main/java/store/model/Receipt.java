@@ -31,8 +31,8 @@ public class Receipt {
     }
 
     public void updateGiftProducts(Product promotion, int possibleGiftProducts) {
-        giftProducts.update(promotion, possibleGiftProducts);
-        promotionDiscount += promotion.getGiftCount(possibleGiftProducts) * promotion.getPrice();
+        GiftProduct giftProduct = giftProducts.update(promotion, possibleGiftProducts);
+        promotionDiscount += giftProduct.getQuantity() * promotion.getPrice();
     }
 
     public int getPayment() {

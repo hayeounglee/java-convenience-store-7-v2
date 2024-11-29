@@ -10,8 +10,10 @@ public class GiftProducts {
         giftProducts = new ArrayList<>();
     }
 
-    public void update(Product promotion, int possibleGiftProducts) {
-        giftProducts.add(new GiftProduct(promotion.getName(), promotion.getGiftCount(possibleGiftProducts)));
+    public GiftProduct update(Product promotion, int possibleGiftProducts) {
+        GiftProduct giftProduct = new GiftProduct(promotion, possibleGiftProducts);
+        giftProducts.add(giftProduct);
+        return giftProduct;
     }
 
     public List<GiftProduct> getGiftProducts() {

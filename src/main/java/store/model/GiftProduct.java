@@ -4,9 +4,9 @@ public class GiftProduct {
     private final String name;
     private final int quantity;
 
-    public GiftProduct(String name, int quantity) {
-        this.name = name;
-        this.quantity = quantity;
+    public GiftProduct(Product promotion, int possibleGiftProducts) {
+        this.name = promotion.getName();
+        this.quantity = possibleGiftProducts / promotion.getPromotionCount();
     }
 
     public String getName() {
