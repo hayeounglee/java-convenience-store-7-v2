@@ -86,7 +86,7 @@ public class Store {
         if (!getOriginalPrice) {
             reduceNormal = 0;
             reducePromotion = products.countReducePromotionWhen(order);
-            products.notOrderOriginalPrice(order);
+            products.doNotOrderOriginalPrice(order);
         }
 
         reduceStock(normal, reduceNormal);

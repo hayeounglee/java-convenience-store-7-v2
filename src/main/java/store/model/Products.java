@@ -34,7 +34,7 @@ public class Products {
         return order.getQuantity() - countBuyOriginalPrice(order);
     }
 
-    public void notOrderOriginalPrice(Order order) {
+    public void doNotOrderOriginalPrice(Order order) {
         order.decreaseQuantity(countBuyOriginalPrice(order));
     }
 
