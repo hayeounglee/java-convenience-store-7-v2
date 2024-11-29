@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import store.model.Orders;
 import store.model.Product;
 import store.model.Products;
@@ -25,13 +26,11 @@ public class OrdersTest {
         products.add(new Product("밤티라미수,4500,2,null"));
         store.addProduct("밤티라미수", new Products(products));
     }
-
+    
     @DisplayName("중복되는 상품 이름을 입력하면 예외가 발생한다.")
     @ParameterizedTest
-    @CsvSource({
-            "'[밤티라미수-1],[밤티라미수-1]'"
-    })
-    void throwWhenDuplicateProductName(String input) {
+    @ValueSource(strings = {"[밤티라미수-1],[밤티라미수-1]"})
+    void throwW(String input) {
         String[] inputs = input.split(",");
         Orders orders = new Orders();
         assertThatThrownBy(() -> orders.addProduct(inputs, store))
