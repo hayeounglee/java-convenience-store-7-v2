@@ -2,6 +2,7 @@ package store.model;
 
 import store.constant.PromotionPeriodState;
 import store.exception.InvalidNonExistOrder;
+import store.strategy.BuyOriginalPrice;
 import store.strategy.GetOneFree;
 import store.strategy.StockManager;
 
@@ -78,28 +79,7 @@ public class Store {
 
     public void calculateWhenBuyOriginalPrice(Order order, boolean getOriginalPrice) {
         Products products = getProducts(order.getName());
-        Product normal = products.getNormalProduct();
-        Product promotion = products.getPromotionProduct();
-
-        boolean canGetDiscount = products.isOrderQuantityBuyOnlyPromotionStock(order);
-
-        int reduceNormal = 0;
-        int reducePromotion = promotion.getQuantity();
-        if (promotion.getQuantity() < order.getQuantity()) {
-            reduceNormal = order.getQuantity() - reducePromotion;
-        }
-
-        if (!getOriginalPrice) {
-            reduceNormal = 0;
-            reducePromotion = products.countReducePromotionWhen(order);
-            products.doNotOrderOriginalPrice(order);
-        }
-
-        reduceStock(normal, reduceNormal);
-        reduceStock(promotion, reducePromotion);
-
-        receipt.updateTotalAndDiscount(order, normal, canGetDiscount);
-        receipt.updateGiftProducts(promotion, reducePromotion);
+        calculateOrder(order, new BuyOriginalPrice(order, products), getOriginalPrice);
     }
 
     public void calculateWhenNothingToAsk(Order order) {
