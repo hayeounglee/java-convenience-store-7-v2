@@ -16,7 +16,7 @@ public class NothingToAsk implements StockManager {
     }
 
     @Override
-    public int calculatePromotionReduction(Order order, Products products, boolean isGetFree) {
+    public int calculatePromotionReduction(Order order, Products products, boolean fake) {
         return order.getQuantity();
     }
 
