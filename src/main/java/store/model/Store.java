@@ -4,6 +4,7 @@ import store.constant.PromotionPeriodState;
 import store.exception.InvalidNonExistOrder;
 import store.strategy.BuyOriginalPrice;
 import store.strategy.GetOneFree;
+import store.strategy.NothingToAsk;
 import store.strategy.StockManager;
 
 import java.util.LinkedHashMap;
@@ -83,18 +84,7 @@ public class Store {
     }
 
     public void calculateWhenNothingToAsk(Order order) {
-        Products products = getProducts(order.getName());
-        Product normal = products.getNormalProduct();
-        Product promotion = products.getPromotionProduct();
-
-        if (!promotion.isPromotionPeriod()) {
-            return;
-        }
-
-        int reducePromotion = order.getQuantity();
-        reduceStock(promotion, reducePromotion);
-        receipt.updateTotalAndDiscount(order, normal, false);
-        receipt.updateGiftProducts(promotion, reducePromotion);
+        calculateOrder(order, new NothingToAsk(), true);
     }
 
     public Receipt getReceipt(boolean isGetDiscount) {
