@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Screen {
+    public static final String PRODUCT_FILE_CATEGORY = "name,price,quantity,promotion\n";
+
     private final InputView inputView;
     private final OutputView outputView;
 
@@ -104,43 +106,43 @@ public class Screen {
             reader.close();
             return makeValidStore(promotionProducts, normalProducts);
         } catch (IOException e) {
-            throw new IllegalArgumentException(e.getMessage()); //이게 뭐지?
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 
     private Store makeValidStore(List<Product> promotionProducts, List<Product> normalProducts) {
         Store store = new Store();
-        List<Product> products = new ArrayList<>();
-        for (Product promotion : promotionProducts) {
+        promotionProducts.forEach(promotion -> {
             Product normal = getNormalProduct(normalProducts, promotion);
             normalProducts.remove(normal);
-
-            products.add(promotion);
-            products.add(normal);
-            store.addProduct(promotion.getName(), new Products(products));
-            products = new ArrayList<>();
-        }
-        if (normalProducts.size() != 0) {
-            for (Product normalProduct : normalProducts) {
-                store.addProduct(normalProduct.getName(), new Products(List.of(normalProduct)));
-            }
-        }
+            store.addProduct(promotion.getName(), new Products(List.of(promotion, normal)));
+        });
+        normalProducts.forEach(normal ->
+                store.addProduct(normal.getName(), new Products(List.of(normal)))
+        );
         return store;
     }
 
     private void updateStockResult(Store store) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/products.md", false));
-            writer.write("name,price,quantity,promotion\n");
+            writer.write(PRODUCT_FILE_CATEGORY);
             for (Map.Entry<String, Products> mapElement : store.getStoreProducts().entrySet()) {
-                Products productList = mapElement.getValue();
-                for (Product product : productList.getProducts()) {
-                    writer.write(product.getName() + "," + product.getPrice() + "," + product.getQuantity() + "," + product.getPromotion() + "\n");
-                }
+                writeProducts(writer, mapElement.getValue());
             }
             writer.close();
         } catch (IOException e) {
-            throw new IllegalArgumentException(e.getMessage()); //이게 뭐지?
+            throw new IllegalArgumentException(e.getMessage());
+        }
+    }
+
+    private void writeProducts(BufferedWriter writer, Products products) {
+        try {
+            for (Product product : products.getProducts()) {
+                writer.write(product.getName() + "," + product.getPrice() + "," + product.getQuantity() + "," + product.getPromotion() + "\n");
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 
@@ -151,8 +153,7 @@ public class Screen {
             }
         }
         return new Product(
-                promotionProduct.getName() + "," + promotionProduct.getPrice() + ",0,null"
-        );
+                promotionProduct.getName() + "," + promotionProduct.getPrice() + ",0,null");
     }
 }
 
