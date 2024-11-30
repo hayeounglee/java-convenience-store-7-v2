@@ -1,11 +1,8 @@
 package store.model;
 
-import store.constant.PromotionPeriodState;
+import store.constant.ProductState;
 import store.exception.InvalidNonExistOrder;
-import store.strategy.BuyOriginalPrice;
-import store.strategy.GetOneFree;
-import store.strategy.NothingToAsk;
-import store.strategy.StockManager;
+import store.strategy.*;
 
 import java.util.LinkedHashMap;
 
@@ -28,40 +25,32 @@ public class Store {
 
         reduceStock(normal, reduceNormal);
         reduceStock(promotion, reducePromotion);
-
         receipt.updateTotalAndDiscount(order, normal, stockManager.getCanGetDiscount());
         receipt.updateGiftProducts(promotion, reducePromotion);
     }
 
     public boolean executeWhenNotPromotionPeriod(Order order) {
         Products products = getProducts(order.getName());
-        Product normal = products.getNormalProduct();
         Product promotion = products.getPromotionProduct();
 
         if (promotion.isPromotionPeriod()) {
             return false;
         }
-
-        int reduceNormal = order.getQuantity();
-        int reducePromotion = 0;
-        if (normal.getQuantity() < order.getQuantity()) {
-            reduceNormal = normal.getQuantity();
-            reducePromotion = order.getQuantity() - reduceNormal;
-        }
-        reduceStock(normal, reduceNormal);
-        reduceStock(promotion, reducePromotion);
-        receipt.updateTotalAndDiscount(order, normal, true);
+        calculateOrder(order, new NotPromotionPeriod(), true);
         return true;
     }
 
-    public PromotionPeriodState executeWhenPromotionPeriod(Order order) {
+    public ProductState getProductState(Order order) {
+        if (executeWhenNotPromotionPeriod(order)) {
+            return ProductState.NO_PROMOTION_PERIOD;
+        }
         if (checkGetOneFree(order)) {
-            return PromotionPeriodState.GET_ONE_FREE;
+            return ProductState.GET_ONE_FREE;
         }
         if (checkBuyOriginalPrice(order)) {
-            return PromotionPeriodState.BUY_ORIGINAL_PRICE;
+            return ProductState.BUY_ORIGINAL_PRICE;
         }
-        return PromotionPeriodState.NOTHING;
+        return ProductState.NOTHING_TO_ASK;
     }
 
     public boolean checkGetOneFree(Order order) {

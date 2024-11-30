@@ -31,8 +31,10 @@ public class Receipt {
     }
 
     public void updateGiftProducts(Product promotion, int possibleGiftProducts) {
-        GiftProduct giftProduct = giftProducts.update(promotion, possibleGiftProducts);
-        promotionDiscount += giftProduct.getQuantity() * promotion.getPrice();
+        if (possibleGiftProducts > 0 & promotion.isPromotionPeriod()) {
+            GiftProduct giftProduct = giftProducts.update(promotion, possibleGiftProducts);
+            promotionDiscount += giftProduct.getQuantity() * promotion.getPrice();
+        }
     }
 
     public int getPayment() {

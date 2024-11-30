@@ -1,6 +1,6 @@
 package store.controller;
 
-import store.constant.PromotionPeriodState;
+import store.constant.ProductState;
 import store.model.*;
 import store.util.Task;
 import store.view.InputView;
@@ -37,20 +37,19 @@ public class Screen {
 
     public void checkProducts(Orders orders, Store store) {
         for (Order order : orders.getOrders()) {
-            if (store.executeWhenNotPromotionPeriod(order)) {
+            ProductState productState = store.getProductState(order);
+            if (productState == ProductState.NO_PROMOTION_PERIOD) {
                 continue;
             }
-
-            PromotionPeriodState promotionPeriodState = store.executeWhenPromotionPeriod(order);
-            if (promotionPeriodState == PromotionPeriodState.GET_ONE_FREE) {
+            if (productState == ProductState.GET_ONE_FREE) {
                 store.calculateWhenGetOneFreeCase(order, askGetOneFree(order));
                 continue;
             }
-            if (promotionPeriodState == PromotionPeriodState.BUY_ORIGINAL_PRICE) {
+            if (productState == ProductState.BUY_ORIGINAL_PRICE) {
                 store.calculateWhenBuyOriginalPrice(order, askBuyOriginalPrice(order, store.countBuyOriginalPrice(order)));
                 continue;
             }
-            if (promotionPeriodState == PromotionPeriodState.NOTHING) {
+            if (productState == ProductState.NOTHING_TO_ASK) {
                 store.calculateWhenNothingToAsk(order);
             }
         }
