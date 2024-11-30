@@ -31,9 +31,7 @@ public class Store {
 
     public boolean executeWhenNotPromotionPeriod(Order order) {
         Products products = getProducts(order.getName());
-        Product promotion = products.getPromotionProduct();
-
-        if (promotion.isPromotionPeriod()) {
+        if (products.isPromotionPeriod()) {
             return false;
         }
         calculateOrder(order, new NotPromotionPeriod(), true);

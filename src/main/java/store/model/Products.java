@@ -13,8 +13,7 @@ public class Products {
 
     public boolean isGetOneFree(Order order) {
         Product promotion = getPromotionProduct();
-
-        if (promotion.isPromotionPeriod() &&
+        if (isPromotionPeriod() &&
                 isPromotionMoreThanOrder(order, promotion) &&
                 isPromotionBenefitPossibleLeft(order, promotion) &&
                 isPromotionStockEnough(order, promotion)) {
@@ -30,25 +29,9 @@ public class Products {
         return false;
     }
 
-    public int countReducePromotionWhen(Order order) {
-        return order.getQuantity() - countBuyOriginalPrice(order);
-    }
-
-    public void doNotOrderOriginalPrice(Order order) {
-        order.decreaseQuantity(countBuyOriginalPrice(order));
-    }
-
-    public boolean isOrderQuantityBuyOnlyPromotionStock(Order order) {
-        return countBuyOriginalPrice(order) == order.getQuantity();
-    }
-
-    public int countBuyOriginalPrice(Order order) {
+    public boolean isPromotionPeriod() {
         Product promotion = getPromotionProduct();
-
-        if (promotion.isPromotionPeriod() && !isPromotionMoreThanOrder(order, promotion)) {
-            return promotion.getNoPromotionBenefit(promotion.getQuantity()) + order.getQuantity() - promotion.getQuantity();
-        }
-        return 0;
+        return promotion.isPromotionPeriod();
     }
 
     private boolean isPromotionMoreThanOrder(Order order, Product promotion) {
@@ -61,6 +44,26 @@ public class Products {
 
     private boolean isPromotionStockEnough(Order order, Product promotion) {
         return promotion.getQuantity() >= order.getQuantity() + 1;
+    }
+
+    public int countBuyOriginalPrice(Order order) {
+        Product promotion = getPromotionProduct();
+        if (promotion.isPromotionPeriod() && !isPromotionMoreThanOrder(order, promotion)) {
+            return promotion.getNoPromotionBenefit(promotion.getQuantity()) + order.getQuantity() - promotion.getQuantity();
+        }
+        return 0;
+    }
+
+    public int countReducePromotionWhen(Order order) {
+        return order.getQuantity() - countBuyOriginalPrice(order);
+    }
+
+    public void doNotOrderOriginalPrice(Order order) {
+        order.decreaseQuantity(countBuyOriginalPrice(order));
+    }
+
+    public boolean isOrderQuantityBuyOnlyPromotionStock(Order order) {
+        return countBuyOriginalPrice(order) == order.getQuantity();
     }
 
     public Product getPromotionProduct() {
