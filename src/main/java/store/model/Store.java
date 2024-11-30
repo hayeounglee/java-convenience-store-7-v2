@@ -77,6 +77,8 @@ public class Store {
         Product normal = products.getNormalProduct();
         Product promotion = products.getPromotionProduct();
 
+        boolean canGetDiscount = products.isOrderQuantityBuyOnlyPromotionStock(order);
+
         int reduceNormal = 0;
         int reducePromotion = promotion.getQuantity();
         if (promotion.getQuantity() < order.getQuantity()) {
@@ -91,8 +93,6 @@ public class Store {
 
         reduceStock(normal, reduceNormal);
         reduceStock(promotion, reducePromotion);
-
-        boolean canGetDiscount = products.isOrderQuantityBuyOnlyPromotionStock(order);
 
         receipt.updateTotalAndDiscount(order, normal, canGetDiscount);
         receipt.updateGiftProducts(promotion, reducePromotion);
