@@ -15,8 +15,6 @@ public class Screen {
     private final InputView inputView;
     private final OutputView outputView;
 
-    private Orders orders;
-    private Store store;
 
     public Screen(InputView inputView, OutputView outputView) {
         this.inputView = inputView;
@@ -25,20 +23,20 @@ public class Screen {
 
     public void run() {
         do {
-            store = bringProducts();
+            Store store = bringProducts();
             outputView.printStoreMenu(store);
 
-            orders = askProductAndPrice();
-            checkProducts();
+            Orders orders = askProductAndPrice(store);
+            checkProducts(orders, store);
 
             Receipt receipt = store.getReceipt(askGetMembership());
             outputView.printReceipt(orders, store, receipt);
             updateStockResult(store);
         } while (askAdditionalPurchase());
-
     }
 
-    public void checkProducts() {
+    public void checkProducts(Orders orders, Store store
+    ) {
         for (Order order : orders.getOrders()) {
             if (store.executeWhenNotPromotionPeriod(order)) {
                 continue;
@@ -59,10 +57,10 @@ public class Screen {
         }
     }
 
-    private Orders askProductAndPrice() {
+    private Orders askProductAndPrice(Store store) {
         return Task.repeatUntilValid(() -> {
             String input = inputView.getProductAndPrice();
-            return makeValidateOrder(input);
+            return makeValidateOrder(input, store);
         });
     }
 
@@ -82,7 +80,7 @@ public class Screen {
         return Task.repeatUntilValid(inputView::getAdditionalPurchase);
     }
 
-    private Orders makeValidateOrder(String input) {
+    private Orders makeValidateOrder(String input, Store store) {
         String[] inputProducts = input.split(",", -1);
         Orders orders = new Orders();
         orders.addProduct(inputProducts, store);
@@ -106,27 +104,30 @@ public class Screen {
                 normalProducts.add(product);
             }
             reader.close();
-
-            Store store = new Store();
-            List<Product> products = new ArrayList<>();
-            for (Product promotion : promotionProducts) {
-                Product normal = getNormalProduct(normalProducts, promotion);
-                normalProducts.remove(normal);
-
-                products.add(promotion);
-                products.add(normal);
-                store.addProduct(promotion.getName(), new Products(products));
-                products = new ArrayList<>();
-            }
-            if (normalProducts.size() != 0) {
-                for (Product normalProduct : normalProducts) {
-                    store.addProduct(normalProduct.getName(), new Products(List.of(normalProduct)));
-                }
-            }
-            return store;
+            return makeValidStore(promotionProducts, normalProducts);
         } catch (IOException e) {
             throw new IllegalArgumentException(e.getMessage()); //이게 뭐지?
         }
+    }
+
+    private Store makeValidStore(List<Product> promotionProducts, List<Product> normalProducts) {
+        Store store = new Store();
+        List<Product> products = new ArrayList<>();
+        for (Product promotion : promotionProducts) {
+            Product normal = getNormalProduct(normalProducts, promotion);
+            normalProducts.remove(normal);
+
+            products.add(promotion);
+            products.add(normal);
+            store.addProduct(promotion.getName(), new Products(products));
+            products = new ArrayList<>();
+        }
+        if (normalProducts.size() != 0) {
+            for (Product normalProduct : normalProducts) {
+                store.addProduct(normalProduct.getName(), new Products(List.of(normalProduct)));
+            }
+        }
+        return store;
     }
 
     private void updateStockResult(Store store) {
