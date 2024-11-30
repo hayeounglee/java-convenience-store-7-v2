@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import store.constant.PromotionPeriodState;
+import store.constant.ProductState;
 import store.model.*;
 
 import java.time.LocalDate;
@@ -38,10 +38,7 @@ public class StoreTest {
     @DisplayName("프로모션 기간 아닐 때 - 프로모션 헤택이 없는 주문인지 판별할 수 있다.")
     void shouldDetermineIfNotPromotionBenefit() {
         Order order = new Order("[물-1]", store);
-        assertThat(store.executeWhenNotPromotionPeriod(order)).isEqualTo(true);
-        assertThat(store.executeWhenPromotionPeriod(order)).isEqualTo(PromotionPeriodState.NOTHING);
-        assertThat(store.checkGetOneFree(order)).isEqualTo(false);
-        assertThat(store.checkBuyOriginalPrice(order)).isEqualTo(false);
+        assertThat(store.getProductState(order)).isEqualTo(ProductState.NO_PROMOTION_PERIOD);
     }
 
     @Test
@@ -49,10 +46,7 @@ public class StoreTest {
     void shouldDetermineIfHasPromotionBenefitButNotPromotionPeriod() {
         assertNowTest(() -> {
             Order order = new Order("[오렌지주스-3]", store);
-            assertThat(store.executeWhenNotPromotionPeriod(order)).isEqualTo(true);
-            assertThat(store.executeWhenPromotionPeriod(order)).isEqualTo(PromotionPeriodState.NOTHING);
-            assertThat(store.checkGetOneFree(order)).isEqualTo(false);
-            assertThat(store.checkBuyOriginalPrice(order)).isEqualTo(false);
+            assertThat(store.getProductState(order)).isEqualTo(ProductState.NO_PROMOTION_PERIOD);
         }, LocalDate.of(1999, 1, 1).atStartOfDay());
     }
 
@@ -60,30 +54,21 @@ public class StoreTest {
     @DisplayName("프로모션 기간일 때 - 1개 수량을 추가할 수 있는 주문인지 판별할 수 있다.")
     void shouldDetermineIfProductCanBeAdded() {
         Order order = new Order("[오렌지주스-1]", store);
-        assertThat(store.executeWhenNotPromotionPeriod(order)).isEqualTo(false);
-        assertThat(store.executeWhenPromotionPeriod(order)).isEqualTo(PromotionPeriodState.GET_ONE_FREE);
-        assertThat(store.checkGetOneFree(order)).isEqualTo(true);
-        assertThat(store.checkBuyOriginalPrice(order)).isEqualTo(false);
+        assertThat(store.getProductState(order)).isEqualTo(ProductState.GET_ONE_FREE);
     }
 
     @Test
     @DisplayName("프로모션 기간일 때 - 정가로 결제해야 하는 수량이 있는 주문인지 판별할 수 있다.")
     void shouldDetermineIfOrderHasOriginalPrice() {
         Order order = new Order("[오렌지주스-9]", store);
-        assertThat(store.executeWhenNotPromotionPeriod(order)).isEqualTo(false);
-        assertThat(store.executeWhenPromotionPeriod(order)).isEqualTo(PromotionPeriodState.BUY_ORIGINAL_PRICE);
-        assertThat(store.checkGetOneFree(order)).isEqualTo(false);
-        assertThat(store.checkBuyOriginalPrice(order)).isEqualTo(true);
+        assertThat(store.getProductState(order)).isEqualTo(ProductState.BUY_ORIGINAL_PRICE);
     }
 
     @Test
     @DisplayName("프로모션 기간일 때 - 추가로 물어볼 필요가 없는 주문인지 판별할 수 있다.")
     void shouldDetermineNothingToAskProducts() {
         Order order = new Order("[오렌지주스-2]", store);
-        assertThat(store.executeWhenNotPromotionPeriod(order)).isEqualTo(false);
-        assertThat(store.executeWhenPromotionPeriod(order)).isEqualTo(PromotionPeriodState.NOTHING);
-        assertThat(store.checkGetOneFree(order)).isEqualTo(false);
-        assertThat(store.checkBuyOriginalPrice(order)).isEqualTo(false);
+        assertThat(store.getProductState(order)).isEqualTo(ProductState.NOTHING_TO_ASK);
     }
 
     @Test
