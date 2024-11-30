@@ -1,12 +1,11 @@
 package store.model;
 
 import camp.nextstep.edu.missionutils.DateTimes;
+import store.util.Reader;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PromotionPolicy {
     private int promotionBuyCount;
@@ -23,25 +22,19 @@ public class PromotionPolicy {
     }
 
     private void initPromotionInfo(String productPromotion) {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/promotions.md"));
-            String readPromotion;
+        Reader reader = new Reader();
+        List<String> lines = reader.readLines("src/main/resources/promotions.md").stream().skip(1).toList();
+        lines.forEach(line -> updatePolicy(line, productPromotion));
+    }
 
-            while ((readPromotion = reader.readLine()) != null) {
-                String[] promotionInfo = readPromotion.split(",");
-                String promotionName = promotionInfo[0];
-                if (promotionName.equals(productPromotion)) {
-                    promotionBuyCount = Integer.parseInt(promotionInfo[1]);
-                    promotionGetCount = Integer.parseInt(promotionInfo[2]);
-                    startDate = promotionInfo[3];
-                    endDate = promotionInfo[4];
-                    reader.close();
-                    return;
-                }
-            }
-            reader.close();
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e.getMessage());
+    private void updatePolicy(String line, String productPromotion) {
+        String[] promotionInfo = line.split(",");
+        String promotionName = promotionInfo[0];
+        if (promotionName.equals(productPromotion)) {
+            promotionBuyCount = Integer.parseInt(promotionInfo[1]);
+            promotionGetCount = Integer.parseInt(promotionInfo[2]);
+            startDate = promotionInfo[3];
+            endDate = promotionInfo[4];
         }
     }
 
@@ -59,10 +52,6 @@ public class PromotionPolicy {
 
     public int getPromotionCount() {
         return promotionBuyCount + promotionGetCount;
-    }
-
-    public int getGiftCount(int quantity) {
-        return quantity / getPromotionCount();
     }
 
     public int getPromotionBuyCount() {

@@ -2,6 +2,7 @@ package store.controller;
 
 import store.constant.ProductState;
 import store.model.*;
+import store.util.Reader;
 import store.util.Task;
 import store.view.InputView;
 import store.view.OutputView;
@@ -88,26 +89,21 @@ public class Screen {
     }
 
     private Store bringProducts() {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/products.md"));
-            String line;
-            List<Product> promotionProducts = new ArrayList<>();
-            List<Product> normalProducts = new ArrayList<>();
+        Reader reader = new Reader();
+        List<String> lines = reader.readLines("src/main/resources/products.md").stream().skip(1).toList();
+        List<Product> promotionProducts = new ArrayList<>();
+        List<Product> normalProducts = new ArrayList<>();
+        lines.forEach(line -> updateProducts(line, promotionProducts, normalProducts));
+        return makeValidStore(promotionProducts, normalProducts);
+    }
 
-            reader.readLine();
-            while ((line = reader.readLine()) != null) {
-                Product product = new Product(line);
-                if (product.isPromotion()) {
-                    promotionProducts.add(product);
-                    continue;
-                }
-                normalProducts.add(product);
-            }
-            reader.close();
-            return makeValidStore(promotionProducts, normalProducts);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e.getMessage());
+    private void updateProducts(String line, List<Product> promotionProducts, List<Product> normalProducts) {
+        Product product = new Product(line);
+        if (product.isPromotion()) {
+            promotionProducts.add(product);
+            return;
         }
+        normalProducts.add(product);
     }
 
     private Store makeValidStore(List<Product> promotionProducts, List<Product> normalProducts) {
