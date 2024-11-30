@@ -3,6 +3,9 @@ package store.model;
 import store.constant.ProductState;
 import store.exception.InvalidNonExistOrder;
 import store.strategy.*;
+import store.strategy.PromotionPeriod.BuyOriginalPrice;
+import store.strategy.PromotionPeriod.GetOneFree;
+import store.strategy.PromotionPeriod.NothingToAsk;
 
 import java.util.LinkedHashMap;
 
