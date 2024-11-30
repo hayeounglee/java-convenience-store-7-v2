@@ -35,8 +35,7 @@ public class Screen {
         } while (askAdditionalPurchase());
     }
 
-    public void checkProducts(Orders orders, Store store
-    ) {
+    public void checkProducts(Orders orders, Store store) {
         for (Order order : orders.getOrders()) {
             if (store.executeWhenNotPromotionPeriod(order)) {
                 continue;

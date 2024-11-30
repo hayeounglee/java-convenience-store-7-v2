@@ -2,6 +2,8 @@ package store.model;
 
 import store.constant.PromotionPeriodState;
 import store.exception.InvalidNonExistOrder;
+import store.strategy.GetOneFree;
+import store.strategy.StockManager;
 
 import java.util.LinkedHashMap;
 
@@ -12,6 +14,21 @@ public class Store {
     public Store() {
         storeProducts = new LinkedHashMap<>();
         receipt = new Receipt();
+    }
+
+    public void calculateOrder(Order order, StockManager stockManager, boolean answer) {
+        Products products = getProducts(order.getName());
+        Product normal = products.getNormalProduct();
+        Product promotion = products.getPromotionProduct();
+
+        int reduceNormal = stockManager.calculateNormalReduction(order, products, answer);
+        int reducePromotion = stockManager.calculatePromotionReduction(order, products, answer);
+
+        reduceStock(normal, reduceNormal);
+        reduceStock(promotion, reducePromotion);
+
+        receipt.updateTotalAndDiscount(order, normal, stockManager.getCanGetDiscount());
+        receipt.updateGiftProducts(promotion, reducePromotion);
     }
 
     public boolean executeWhenNotPromotionPeriod(Order order) {
@@ -51,20 +68,7 @@ public class Store {
     }
 
     public void calculateWhenGetOneFreeCase(Order order, boolean isGetFree) {
-        Products products = getProducts(order.getName());
-        Product normal = products.getNormalProduct();
-        Product promotion = products.getPromotionProduct();
-
-        int reduceNormal = 0;
-        int reducePromotion = order.getQuantity();
-        if (isGetFree) {
-            reducePromotion += 1;
-            order.increaseQuantity();
-        }
-        reduceStock(normal, reduceNormal);
-        reduceStock(promotion, reducePromotion);
-        receipt.updateTotalAndDiscount(order, normal, false);
-        receipt.updateGiftProducts(promotion, reducePromotion);
+        calculateOrder(order, new GetOneFree(), isGetFree);
     }
 
     public boolean checkBuyOriginalPrice(Order order) {
