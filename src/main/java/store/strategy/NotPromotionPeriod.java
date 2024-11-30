@@ -5,7 +5,7 @@ import store.model.Product;
 import store.model.Products;
 
 public class NotPromotionPeriod implements StockManager {
-    private boolean canGetDiscount;
+    private final boolean canGetDiscount;
 
     public NotPromotionPeriod() {
         canGetDiscount = true;

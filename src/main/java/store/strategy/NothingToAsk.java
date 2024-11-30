@@ -4,7 +4,7 @@ import store.model.Order;
 import store.model.Products;
 
 public class NothingToAsk implements StockManager {
-    private boolean canGetDiscount;
+    private final boolean canGetDiscount;
 
     public NothingToAsk() {
         canGetDiscount = false;

@@ -13,20 +13,14 @@ public class Products {
 
     public boolean isGetOneFree(Order order) {
         Product promotion = getPromotionProduct();
-        if (isPromotionPeriod() &&
+        return isPromotionPeriod() &&
                 isPromotionMoreThanOrder(order, promotion) &&
                 isPromotionBenefitPossibleLeft(order, promotion) &&
-                isPromotionStockEnough(order, promotion)) {
-            return true;
-        }
-        return false;
+                isPromotionStockEnough(order, promotion);
     }
 
     public boolean isBuyOriginalPrice(Order order) {
-        if (countBuyOriginalPrice(order) > 0) {
-            return true;
-        }
-        return false;
+        return countBuyOriginalPrice(order) > 0;
     }
 
     public boolean isPromotionPeriod() {

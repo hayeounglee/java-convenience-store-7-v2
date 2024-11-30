@@ -9,7 +9,6 @@ import store.constant.ProductState;
 import store.model.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static camp.nextstep.edu.missionutils.test.Assertions.assertNowTest;
@@ -21,17 +20,9 @@ public class StoreTest {
     @BeforeEach
     void setUp() {
         store = new Store();
-        List<Product> products = new ArrayList<>();
-        products.add(new Product("오렌지주스,1800,9,MD추천상품"));
-        products.add(new Product("오렌지주스,1800,2,null"));
-        store.addProduct("오렌지주스", new Products(products));
-        products = new ArrayList<>();
-        products.add(new Product("물,500,7,null"));
-        store.addProduct("물", new Products(products));
-        products = new ArrayList<>();
-        products.add(new Product("컵라면,1700,0,MD추천상품"));
-        products.add(new Product("컵라면,1700,10,null"));
-        store.addProduct("컵라면", new Products(products));
+        store.addProduct("오렌지주스", new Products(List.of(new Product("오렌지주스,1800,9,MD추천상품"), new Product("오렌지주스,1800,2,null"))));
+        store.addProduct("물", new Products(List.of(new Product("물,500,7,null"))));
+        store.addProduct("컵라면", new Products(List.of(new Product("컵라면,1700,0,MD추천상품"), new Product("컵라면,1700,10,null"))));
     }
 
     @Test

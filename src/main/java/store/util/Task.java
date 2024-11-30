@@ -1,6 +1,5 @@
 package store.util;
 
-
 public interface Task<T> {
     static <T> T repeatUntilValid(Task<T> task) {
         while (true) {

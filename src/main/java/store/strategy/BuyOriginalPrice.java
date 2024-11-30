@@ -5,7 +5,7 @@ import store.model.Product;
 import store.model.Products;
 
 public class BuyOriginalPrice implements StockManager {
-    private boolean canGetDiscount;
+    private final boolean canGetDiscount;
 
     public BuyOriginalPrice(Order order, Products products) {
         this.canGetDiscount = products.isOrderQuantityBuyOnlyPromotionStock(order);
