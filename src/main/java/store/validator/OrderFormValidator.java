@@ -24,15 +24,9 @@ public class OrderFormValidator {
     }
 
     public void validateQuantity(String input) {
-        try {
-            int quantity = Parser.parseToInt(input);
-            if (quantity <= 0) {
-                throw new InvalidQuantityException();
-            }
-        } catch (InvalidQuantityException e) {
+        int quantity = Parser.parseToInt(input);
+        if (quantity <= 0) {
             throw new InvalidQuantityException();
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException();
         }
     }
 }

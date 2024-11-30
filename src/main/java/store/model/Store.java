@@ -22,7 +22,6 @@ public class Store {
         Products products = getProducts(order.getName());
         Product normal = products.getNormalProduct();
         Product promotion = products.getPromotionProduct();
-
         int reduceNormal = stockManager.calculateNormalReduction(order, products, answer);
         int reducePromotion = stockManager.calculatePromotionReduction(order, products, answer);
 

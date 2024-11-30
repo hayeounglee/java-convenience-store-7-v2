@@ -44,17 +44,21 @@ public class Screen {
             if (productState == ProductState.NO_PROMOTION_PERIOD) {
                 continue;
             }
-            if (productState == ProductState.GET_ONE_FREE) {
-                store.calculateWhenGetOneFreeCase(order, askGetOneFree(order));
-                continue;
-            }
-            if (productState == ProductState.BUY_ORIGINAL_PRICE) {
-                store.calculateWhenBuyOriginalPrice(order, askBuyOriginalPrice(order, store.countBuyOriginalPrice(order)));
-                continue;
-            }
-            if (productState == ProductState.NOTHING_TO_ASK) {
-                store.calculateWhenNothingToAsk(order);
-            }
+            calculateWhenPromotionPeriod(order, store, productState);
+        }
+    }
+
+    private void calculateWhenPromotionPeriod(Order order, Store store, ProductState productState) {
+        if (productState == ProductState.GET_ONE_FREE) {
+            store.calculateWhenGetOneFreeCase(order, askGetOneFree(order));
+            return;
+        }
+        if (productState == ProductState.BUY_ORIGINAL_PRICE) {
+            store.calculateWhenBuyOriginalPrice(order, askBuyOriginalPrice(order, store.countBuyOriginalPrice(order)));
+            return;
+        }
+        if (productState == ProductState.NOTHING_TO_ASK) {
+            store.calculateWhenNothingToAsk(order);
         }
     }
 
